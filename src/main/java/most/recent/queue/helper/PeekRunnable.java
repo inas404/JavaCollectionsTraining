@@ -1,22 +1,24 @@
+package most.recent.queue.helper;
+
 import java.util.Queue;
 
-public class PollRunnable<E> implements Runnable {
+public class PeekRunnable<E> implements Runnable {
 
   private Queue<E> queue;
 
-  public PollRunnable(Queue queue) {
+  public PeekRunnable(Queue queue) {
     this.queue = queue;
   }
 
   @Override
   public void run() {
     System.out.println("[START PEEK]: " + Thread.currentThread().getName());
-    E polledValue = offerToQueue();
-    System.out.println("Polled value: " + polledValue);
+    E peekedValue = offerToQueue();
+    System.out.println("Peaked value: " + peekedValue);
     System.out.println("[END PEEK]: " + Thread.currentThread().getName());
   }
 
   private E offerToQueue() {
-    return queue.poll();
+    return queue.peek();
   }
 }

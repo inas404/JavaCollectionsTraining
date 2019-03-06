@@ -1,3 +1,5 @@
+package most.recent.queue.helper;
+
 import java.util.Queue;
 
 public class OfferRunnable<E> implements Runnable {
