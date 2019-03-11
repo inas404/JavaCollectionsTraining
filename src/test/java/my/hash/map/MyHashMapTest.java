@@ -47,7 +47,7 @@ public class MyHashMapTest {
     Assert.assertEquals(123, mymap.get(1));
 
     mymap.remove(1);
-    Assert.assertEquals(-1, mymap.get(1));
+    Assert.assertEquals(null, mymap.get(1));
   }
 
   @Test
@@ -68,7 +68,7 @@ public class MyHashMapTest {
     Assert.assertEquals(404, mymap.get(10001));
 
     mymap.remove(10001);
-    Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(null, mymap.get(10001));
   }
 
   @Test
@@ -78,26 +78,26 @@ public class MyHashMapTest {
     Assert.assertEquals(0, mymap.get(0));
 
     mymap.remove(0);
-    Assert.assertEquals(-1, mymap.get(0));
+    Assert.assertEquals(null, mymap.get(0));
 
     mymap.put(0, 1000000);
     Assert.assertEquals(1000000, mymap.get(0));
 
     mymap.remove(0);
-    Assert.assertEquals(-1, mymap.get(0));
+    Assert.assertEquals(null, mymap.get(0));
 
     // key = 1000000
     mymap.put(1000000, 0);
     Assert.assertEquals(0, mymap.get(1000000));
 
     mymap.remove(1000000);
-    Assert.assertEquals(-1, mymap.get(1000000));
+    Assert.assertEquals(null, mymap.get(1000000));
 
     mymap.put(1000000, 1000000);
     Assert.assertEquals(1000000, mymap.get(1000000));
 
     mymap.remove(1000000);
-    Assert.assertEquals(-1, mymap.get(1000000));
+    Assert.assertEquals(null, mymap.get(1000000));
    }
 
   @Test
@@ -112,20 +112,49 @@ public class MyHashMapTest {
     Assert.assertEquals(404, mymap.get(100001));
 
     mymap.remove(10001);
-    Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(null, mymap.get(10001));
     Assert.assertEquals(123, mymap.get(1));
     Assert.assertEquals(404, mymap.get(100001));
 
     mymap.remove(1);
-    Assert.assertEquals(-1, mymap.get(1));
-    Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(null, mymap.get(1));
+    Assert.assertEquals(null, mymap.get(10001));
     Assert.assertEquals(404, mymap.get(100001));
 
     mymap.put(10001, 678);
     Assert.assertEquals(678, mymap.get(10001));
 
     mymap.remove(10001);
-    Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(null, mymap.get(10001));
   }
 
+  @Test
+  public void mapShouldPutAndGetAnyType(){
+    mymap.put(1, "str1");
+    Assert.assertEquals("str1", mymap.get(1));
+
+    mymap.put(1, "str2");
+    Assert.assertEquals("str2", mymap.get(1));
+
+    mymap.put(1, "str3");
+    Assert.assertEquals("str3", mymap.get(1));
+  }
+
+  @Test
+  public void shouldPutAndDeleteAnyType(){
+    mymap.put(1, "str1");
+    Assert.assertEquals("str1", mymap.get(1));
+
+    mymap.remove(1);
+    Assert.assertEquals(null, mymap.get(1));
+  }
+
+  @Test
+  public void shouldUpdateAnyType(){
+    mymap.put(1, "str1");
+    Assert.assertEquals("str1", mymap.get(1));
+
+    mymap.put(1, "str2");
+    Assert.assertEquals("str2", mymap.get(1));
+  }
 }
