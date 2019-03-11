@@ -69,7 +69,7 @@ class MyHashMap {
     if (arr[index] == null) {
       return;
     } else if (arr[index].hash == keyHashCode) {
-      arr[index] = null;
+      arr[index] = arr[index].next;
     } else {
       Node current = arr[index];
       Node prev = current;

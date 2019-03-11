@@ -13,7 +13,7 @@ public class MyHashMapTest {
   }
 
   @Test
-  public void shouldPutAndGetEntryToHash() {
+  public void shouldPutAndGetEntry() {
     mymap.put(1, 123);
     Assert.assertEquals(123, mymap.get(1));
 
@@ -25,7 +25,7 @@ public class MyHashMapTest {
   }
 
   @Test
-  public void shouldPutWithCollisionAndGetEntryToHash() {
+  public void shouldPutWithCollisionAndGetEntry() {
     mymap.put(1, 123);
     Assert.assertEquals(123, mymap.get(1));
 
@@ -51,6 +51,15 @@ public class MyHashMapTest {
   }
 
   @Test
+  public void shouldUpdate(){
+    mymap.put(1, 123);
+    Assert.assertEquals(123, mymap.get(1));
+
+    mymap.put(1, 404);
+    Assert.assertEquals(404, mymap.get(1));
+  }
+
+  @Test
   public void shouldPutAndDeleteInTheMiddleOfTheBucket(){
     mymap.put(1, 123);
     Assert.assertEquals(123, mymap.get(1));
@@ -63,21 +72,57 @@ public class MyHashMapTest {
   }
 
   @Test
+  public void shouldPutAndGetAndRemoveEntriesOnBoundaries(){
+    // key = 0
+    mymap.put(0, 0);
+    Assert.assertEquals(0, mymap.get(0));
+
+    mymap.remove(0);
+    Assert.assertEquals(-1, mymap.get(0));
+
+    mymap.put(0, 1000000);
+    Assert.assertEquals(1000000, mymap.get(0));
+
+    mymap.remove(0);
+    Assert.assertEquals(-1, mymap.get(0));
+
+    // key = 1000000
+    mymap.put(1000000, 0);
+    Assert.assertEquals(0, mymap.get(1000000));
+
+    mymap.remove(1000000);
+    Assert.assertEquals(-1, mymap.get(1000000));
+
+    mymap.put(1000000, 1000000);
+    Assert.assertEquals(1000000, mymap.get(1000000));
+
+    mymap.remove(1000000);
+    Assert.assertEquals(-1, mymap.get(1000000));
+   }
+
+  @Test
   public void integrationTest(){
     mymap.put(1, 123);
     Assert.assertEquals(123, mymap.get(1));
 
-    mymap.put(10001, 404);
-    Assert.assertEquals(404, mymap.get(10001));
+    mymap.put(10001, 456);
+    Assert.assertEquals(456, mymap.get(10001));
 
     mymap.put(100001, 404);
     Assert.assertEquals(404, mymap.get(100001));
 
     mymap.remove(10001);
     Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(123, mymap.get(1));
+    Assert.assertEquals(404, mymap.get(100001));
 
-    mymap.put(10001, 404);
-    Assert.assertEquals(404, mymap.get(10001));
+    mymap.remove(1);
+    Assert.assertEquals(-1, mymap.get(1));
+    Assert.assertEquals(-1, mymap.get(10001));
+    Assert.assertEquals(404, mymap.get(100001));
+
+    mymap.put(10001, 678);
+    Assert.assertEquals(678, mymap.get(10001));
 
     mymap.remove(10001);
     Assert.assertEquals(-1, mymap.get(10001));
