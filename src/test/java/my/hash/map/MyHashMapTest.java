@@ -157,4 +157,17 @@ public class MyHashMapTest {
     mymap.put(1, "str2");
     Assert.assertEquals("str2", mymap.get(1));
   }
+
+  @Test
+  public void myHashMapShouldSupportResizing(){
+    mymap.put(101, 1);
+    Assert.assertEquals(1, mymap.get(101));
+
+    mymap.put(102, 2);
+    Assert.assertEquals(2, mymap.get(102));
+
+    mymap.resize(1000);
+    Assert.assertEquals(1, mymap.get(101));
+    Assert.assertEquals(2, mymap.get(102));
+  }
 }

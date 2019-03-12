@@ -2,14 +2,26 @@ package my.hash.map;
 
 class MyHashMap<E> {
 
-  int MY_MAP_SZ = 10000;
-  Node<E>[] arr;
+  private int MY_MAP_SZ = 100;
+  private Node<E>[] arr;
 
   /**
    * Initialize your data structure here.
    */
   public MyHashMap() {
     arr = new Node[MY_MAP_SZ];
+  }
+
+  public void resize(int newSize){
+    MY_MAP_SZ = newSize;
+    Node<E>[] resizedArr = new Node[newSize];
+    for (Node<E> entry: arr){
+      if(entry == null){
+        continue;
+      }
+      resizedArr[getIndex(entry.key)] = entry;
+    }
+    arr = resizedArr;
   }
 
   /**
