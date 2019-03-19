@@ -2,37 +2,28 @@ package my.hash.map;
 
 class MyHashMap<K, V> {
 
-  private int capacity = 100;
+  private int capacity = 16;
   private int size;
+  private float loadFactor;
+  private float threshold;
   private Node<K, V>[] arr;
 
-  /**
-   * Initialize your data structure here.
-   */
   public MyHashMap() {
+    this(0.75f);
+  }
+
+  public MyHashMap(float loadFactor) {
     arr = new Node[capacity];
+    this.loadFactor = loadFactor;
+    this.threshold = capacity * loadFactor;
   }
 
-  public void resize(int newSize) {
-    capacity = newSize;
-    Node<K, V>[] resizedArr = new Node[newSize];
-    for (Node<K, V> entry : arr) {
-      if (entry == null) {
-        continue;
-      }
-      resizedArr[getIndex(entry.key.hashCode())] = entry;
-    }
-    arr = resizedArr;
-  }
-
-  /**
-   * value will always be non-negative.
-   */
   public V put(K key, V value) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
     Node<K, V> newNode = new Node(key, value, keyHashCode, null);
     if (arr[index] == null) {
+      autoResize();
       arr[index] = newNode;
       size++;
     } else {
@@ -46,6 +37,7 @@ class MyHashMap<K, V> {
         prev = current;
         current = current.next;
       }
+      autoResize();
       prev.next = newNode; // add to end of linkedlist of arr[index]
       size++;
     }
@@ -56,9 +48,6 @@ class MyHashMap<K, V> {
     return keyHashCode % capacity;
   }
 
-  /**
-   * Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key
-   */
   public V get(K key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
@@ -76,9 +65,6 @@ class MyHashMap<K, V> {
     }
   }
 
-  /**
-   * Removes the mapping of the specified value key if this map contains a mapping for the key
-   */
   public void remove(Integer key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
@@ -103,10 +89,29 @@ class MyHashMap<K, V> {
     }
   }
 
-  public int size(){
+  public int size() {
     return size;
   }
 
+  private void autoResize() {
+    if (size > threshold) {
+      resize(capacity * 2);
+    }
+  }
+
+  private void resize(int newCapacity) {
+    capacity = newCapacity;
+    this.threshold = capacity * loadFactor;
+    Node<K, V>[] resizedArr = new Node[newCapacity];
+    for (Node<K, V> entry : arr) {
+      if (entry == null) {
+        continue;
+      }
+      resizedArr[getIndex(entry.key.hashCode())] = entry;
+    }
+    arr = resizedArr;
+  }
+  
   private class Node<K, V> {
 
     K key;
@@ -122,8 +127,3 @@ class MyHashMap<K, V> {
     }
   }
 }
-
-/**
- * Your MyHashMap object will be instantiated and called as such: MyHashMap obj = new MyHashMap(); obj.put(key,value);
- * int param_2 = obj.get(key); obj.remove(key);
- */

@@ -216,10 +216,5 @@ public class MyHashMapTest {
     mymap.put(102, 2);
     Assert.assertEquals(2, mymap.get(102));
     Assert.assertEquals(2, mymap.size());
-
-    mymap.resize(1000);
-    Assert.assertEquals(1, mymap.get(101));
-    Assert.assertEquals(2, mymap.get(102));
-    Assert.assertEquals(2, mymap.size());
   }
 }
