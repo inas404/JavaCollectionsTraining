@@ -1,9 +1,9 @@
 package my.hash.map;
 
-class MyHashMap<E> {
+class MyHashMap<K, V> {
 
   private int MY_MAP_SZ = 100;
-  private Node<E>[] arr;
+  private Node<K, V>[] arr;
 
   /**
    * Initialize your data structure here.
@@ -12,14 +12,14 @@ class MyHashMap<E> {
     arr = new Node[MY_MAP_SZ];
   }
 
-  public void resize(int newSize){
+  public void resize(int newSize) {
     MY_MAP_SZ = newSize;
-    Node<E>[] resizedArr = new Node[newSize];
-    for (Node<E> entry: arr){
-      if(entry == null){
+    Node<K, V>[] resizedArr = new Node[newSize];
+    for (Node<K, V> entry : arr) {
+      if (entry == null) {
         continue;
       }
-      resizedArr[getIndex(entry.key)] = entry;
+      resizedArr[getIndex(entry.key.hashCode())] = entry;
     }
     arr = resizedArr;
   }
@@ -27,25 +27,26 @@ class MyHashMap<E> {
   /**
    * value will always be non-negative.
    */
-  public void put(Integer key, E value) {
+  public V put(K key, V value) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
-    Node<E> newNode = new Node(key, value, keyHashCode, null);
+    Node<K, V> newNode = new Node(key, value, keyHashCode, null);
     if (arr[index] == null) {
       arr[index] = newNode;
     } else {
-      Node<E> current = arr[index];
-      Node<E> prev = current;
+      Node<K, V> current = arr[index];
+      Node<K, V> prev = current;
       while (current != null) {
         if (current.hash == keyHashCode) {
           current.value = value; //update value
-          return;
+          return value;
         }
         prev = current;
         current = current.next;
       }
       prev.next = newNode; // add to end of linkedlist of arr[index]
     }
+    return value;
   }
 
   private int getIndex(int keyHashCode) {
@@ -55,13 +56,13 @@ class MyHashMap<E> {
   /**
    * Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key
    */
-  public E get(Integer key) {
+  public V get(K key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
     if (arr[index] == null) {
       return null;
     } else {
-      Node<E> current = arr[index];
+      Node<K, V> current = arr[index];
       while (current != null) {
         if (current.hash == keyHashCode) {
           return current.value;
@@ -83,8 +84,8 @@ class MyHashMap<E> {
     } else if (arr[index].hash == keyHashCode) {
       arr[index] = arr[index].next;
     } else {
-      Node<E> current = arr[index];
-      Node<E> prev = current;
+      Node<K, V> current = arr[index];
+      Node<K, V> prev = current;
       while (current != null) {
         if (current.hash == keyHashCode) {
           prev.next = current.next;
@@ -97,14 +98,14 @@ class MyHashMap<E> {
     }
   }
 
-  private class Node<E> {
+  private class Node<K, V> {
 
-    Integer key;
-    E value;
+    K key;
+    V value;
     int hash;
-    Node<E> next;
+    Node<K, V> next;
 
-    public Node(int key, E value, int hash, Node next) {
+    public Node(K key, V value, int hash, Node next) {
       this.key = key;
       this.value = value;
       this.hash = hash;

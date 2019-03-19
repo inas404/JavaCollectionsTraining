@@ -138,6 +138,12 @@ public class MyHashMapTest {
 
     mymap.put(1, "str3");
     Assert.assertEquals("str3", mymap.get(1));
+
+    mymap.put("k", "v");
+    Assert.assertEquals("v", mymap.get("k"));
+
+    mymap.put('k', "v2");
+    Assert.assertEquals("v2", mymap.get("k"));
   }
 
   @Test
@@ -170,4 +176,6 @@ public class MyHashMapTest {
     Assert.assertEquals(1, mymap.get(101));
     Assert.assertEquals(2, mymap.get(102));
   }
+
+
 }
