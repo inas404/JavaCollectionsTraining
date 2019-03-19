@@ -2,18 +2,19 @@ package my.hash.map;
 
 class MyHashMap<K, V> {
 
-  private int MY_MAP_SZ = 100;
+  private int capacity = 100;
+  private int size;
   private Node<K, V>[] arr;
 
   /**
    * Initialize your data structure here.
    */
   public MyHashMap() {
-    arr = new Node[MY_MAP_SZ];
+    arr = new Node[capacity];
   }
 
   public void resize(int newSize) {
-    MY_MAP_SZ = newSize;
+    capacity = newSize;
     Node<K, V>[] resizedArr = new Node[newSize];
     for (Node<K, V> entry : arr) {
       if (entry == null) {
@@ -33,6 +34,7 @@ class MyHashMap<K, V> {
     Node<K, V> newNode = new Node(key, value, keyHashCode, null);
     if (arr[index] == null) {
       arr[index] = newNode;
+      size++;
     } else {
       Node<K, V> current = arr[index];
       Node<K, V> prev = current;
@@ -45,12 +47,13 @@ class MyHashMap<K, V> {
         current = current.next;
       }
       prev.next = newNode; // add to end of linkedlist of arr[index]
+      size++;
     }
     return value;
   }
 
   private int getIndex(int keyHashCode) {
-    return keyHashCode % MY_MAP_SZ;
+    return keyHashCode % capacity;
   }
 
   /**
@@ -83,6 +86,7 @@ class MyHashMap<K, V> {
       return;
     } else if (arr[index].hash == keyHashCode) {
       arr[index] = arr[index].next;
+      size--;
     } else {
       Node<K, V> current = arr[index];
       Node<K, V> prev = current;
@@ -90,12 +94,17 @@ class MyHashMap<K, V> {
         if (current.hash == keyHashCode) {
           prev.next = current.next;
           current.next = null;
+          size--;
           return;
         }
         prev = current;
         current = current.next;
       }
     }
+  }
+
+  public int size(){
+    return size;
   }
 
   private class Node<K, V> {
