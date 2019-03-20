@@ -1,6 +1,9 @@
 package my.hash.map;
 
-public class MyHashMap<K, V> {
+import java.util.AbstractMap;
+import java.util.Set;
+
+public class MyHashMap<K, V> extends AbstractMap<K, V> {
 
   private int capacity = 16;
   private int size;
@@ -18,6 +21,7 @@ public class MyHashMap<K, V> {
     this.threshold = capacity * loadFactor;
   }
 
+  @Override
   public V put(K key, V value) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
@@ -48,7 +52,8 @@ public class MyHashMap<K, V> {
     return keyHashCode % capacity;
   }
 
-  public V get(K key) {
+  @Override
+  public V get(Object key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
     if (arr[index] == null) {
@@ -65,14 +70,16 @@ public class MyHashMap<K, V> {
     }
   }
 
-  public void remove(K key) {
+  @Override
+  public V remove(Object key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
     if (arr[index] == null) {
-      return;
+      return null;
     } else if (arr[index].hash == keyHashCode) {
       arr[index] = arr[index].next;
       size--;
+      return (V) key;
     } else {
       Node<K, V> current = arr[index];
       Node<K, V> prev = current;
@@ -81,12 +88,18 @@ public class MyHashMap<K, V> {
           prev.next = current.next;
           current.next = null;
           size--;
-          return;
+          return (V) key;
         }
         prev = current;
         current = current.next;
       }
     }
+    return null;
+  }
+
+  @Override
+  public Set<Entry<K, V>> entrySet() {
+    return null;
   }
 
   public int size() {
@@ -112,8 +125,14 @@ public class MyHashMap<K, V> {
     arr = resizedArr;
   }
 
+  @Override
   public boolean isEmpty() {
     return size == 0 ? true : false;
+  }
+
+  @Override
+  public boolean containsKey(Object key) {
+    return get(key) == null? false: true;
   }
 
   private class Node<K, V> {
