@@ -29,7 +29,7 @@ public class MyHashSet<E> extends AbstractSet {
 
   @Override
   public Iterator iterator() {
-    return null;
+    return map.keySet().iterator();
   }
 
   @Override
