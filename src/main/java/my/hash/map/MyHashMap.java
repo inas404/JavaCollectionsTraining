@@ -1,6 +1,6 @@
 package my.hash.map;
 
-class MyHashMap<K, V> {
+public class MyHashMap<K, V> {
 
   private int capacity = 16;
   private int size;
@@ -65,7 +65,7 @@ class MyHashMap<K, V> {
     }
   }
 
-  public void remove(Integer key) {
+  public void remove(K key) {
     int keyHashCode = key.hashCode();
     int index = getIndex(keyHashCode);
     if (arr[index] == null) {
@@ -111,7 +111,11 @@ class MyHashMap<K, V> {
     }
     arr = resizedArr;
   }
-  
+
+  public boolean isEmpty() {
+    return size == 0 ? true : false;
+  }
+
   private class Node<K, V> {
 
     K key;
