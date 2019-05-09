@@ -1,5 +1,6 @@
 package io;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,14 +17,14 @@ public class CountChar {
   int count(char c) {
     int result = 0;
     //read the contents of a file as a stream of characters
-    try (Reader fileReader = new FileReader(FILE_NAME)) {
-      int data = fileReader.read();
+    try (Reader fileReader = new FileReader(FILE_NAME); Reader buff = new BufferedReader(fileReader)) {
+      int data = buff.read();
       while (data != -1) {
         char charData = (char) data;
         if (charData == c || (Character.isAlphabetic(c) && Character.toLowerCase(charData) == c)) {
           result++;
         }
-        data = fileReader.read();
+        data = buff.read();
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -36,13 +37,13 @@ public class CountChar {
   int countCaseSensitive(char c) {
     int result = 0;
     //read the contents of a file as a stream of characters
-    try (Reader fileReader = new FileReader(FILE_NAME)) {
-      int data = fileReader.read();
+    try (Reader fileReader = new FileReader(FILE_NAME); Reader buff = new BufferedReader(fileReader)) {
+      int data = buff.read();
       while (data != -1) {
         if ((char) data == c) {
           result++;
         }
-        data = fileReader.read();
+        data = buff.read();
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
