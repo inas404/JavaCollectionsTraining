@@ -18,7 +18,7 @@ public class MyBlockingQueue<E> {
     try {
       while (myBlockingQueue.size() == 10) {
         System.out.println(Thread.currentThread().getName() + " : Queue is full, waiting");
-        isNotFull.await(); // Producer thread blocks if full
+        isNotFull.await(); // Producer thread blocks if full, waits for notFull signal
       }
       myBlockingQueue.add(item);
       System.out.println(Thread.currentThread().getName() + " : Signalling that Queue is no more empty now");
@@ -35,7 +35,7 @@ public class MyBlockingQueue<E> {
     try {
       while (myBlockingQueue.size() == 0) {
         System.out.println(Thread.currentThread().getName() + " : Queue is empty, waiting");
-        isNotEmpty.await(); // Consumer thread blocks if empty
+        isNotEmpty.await(); // Consumer thread blocks if empty, waits for not empty signal
       }
       System.out.println(Thread.currentThread().getName() + " : Signalling that queue may be empty now");
       isNotFull.signalAll(); // Consumer signals notFull to Producer

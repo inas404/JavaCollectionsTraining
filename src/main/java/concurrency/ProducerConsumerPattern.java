@@ -6,7 +6,11 @@ import lombok.Getter;
 @Getter
 public class ProducerConsumerPattern {
 
-  private MyBlockingQueue<String> queue = new MyBlockingQueue();
+  //  uncomment any of 3 ways of using blocking queue
+  //  private BlockingQueue<String> queue = new BlockingQueue();
+  //  private MyBlockingQueue<String> queue = new MyBlockingQueue();
+  private MyOtherBlockingQueue<String> queue = new MyOtherBlockingQueue();
+
   @Getter
   private Producer producer = new Producer();
   @Getter
@@ -52,12 +56,10 @@ public class ProducerConsumerPattern {
 
   public static void main(String[] args) {
     ProducerConsumerPattern producerConsumer = new ProducerConsumerPattern();
+
     (new Thread(producerConsumer.getProducer(), "producer 1")).start();
+
     (new Thread(producerConsumer.getConsumer(), "consumer 1")).start();
-
-    (new Thread(producerConsumer.getProducer(), "producer 2")).start();
-    (new Thread(producerConsumer.getConsumer(), "consumer 2")).start();
-
   }
 }
 
