@@ -44,19 +44,18 @@ public class WordCounter {
   }
 
   private void countWordsInAllFiles() throws IOException, InterruptedException {
-    // TODO: create new thread for each file
     List<Callable<Object>> todo = new ArrayList<>();
 
     ExecutorService executorService = Executors.newCachedThreadPool();
     Files.walk(path).filter(f -> !Files.isDirectory(f)).forEach(f ->
-        todo.add(Executors.callable(new cwRunnable(f.toAbsolutePath().toString()))));
+        todo.add(Executors.callable(new CountWordsRunnable(f.toAbsolutePath().toString()))));
 
     executorService.invokeAll(todo);
     executorService.shutdown();
   }
 
   @AllArgsConstructor
-  private class cwRunnable implements Runnable {
+  private class CountWordsRunnable implements Runnable {
 
     String filePath;
 
