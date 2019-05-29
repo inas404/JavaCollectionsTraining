@@ -114,7 +114,7 @@ public class WordCounter {
   }
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    WordCounter wc = new WordCounter("/Users/inas/Careem/Backend/src/main/resources/word.counter", 2);
+    WordCounter wc = new WordCounter("resources/word.counter", 2);
     wc.read();
   }
 }
