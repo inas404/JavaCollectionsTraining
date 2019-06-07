@@ -55,7 +55,7 @@ public class GetIntByOffset {
 
   public static void main(String args[]) {
     GetIntByOffset go = new GetIntByOffset(
-        "/resources/io/get_int_by_offset_file.dms");
+        "/Users/inas/Careem/Backend/src/main/resources/io/get_int_by_offset_file.dms");
     System.out.print(go.getInt());
     System.out.print(go.getIntNio());
   }

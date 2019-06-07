@@ -1,6 +1,5 @@
 package word.counter;
 
-import static java.util.Map.Entry.*;
 import static java.util.stream.Collectors.*;
 
 import java.io.BufferedReader;
@@ -11,15 +10,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 
 /**
@@ -30,9 +30,13 @@ public class WordCounter {
 
   private Path path;
   private boolean isDirectory;
-  private Map<String, Integer> mostUsedNWords, leastUsedNWords;
-  private Map<String, Integer> wordCountMap = Collections.synchronizedMap(new HashMap<>());
+  private List<Entry<String, Integer>> mostUsedNWords, leastUsedNWords;
+  private Map<String, Integer> wordCountMap = new HashMap<>();
+  private final Object lock = new Object();
   private int totalWordsCount = 0, n;
+  //TODO:
+  // Tests
+  // use future for final results
 
   WordCounter(String path, int n) throws FileNotFoundException {
     this.n = n;
@@ -46,7 +50,7 @@ public class WordCounter {
   private void countWordsInAllFiles() throws IOException, InterruptedException {
     List<Callable<Object>> todo = new ArrayList<>();
 
-    ExecutorService executorService = Executors.newCachedThreadPool();
+    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     Files.walk(path).filter(f -> !Files.isDirectory(f)).forEach(f ->
         todo.add(Executors.callable(new CountWordsRunnable(f.toAbsolutePath().toString()))));
 
@@ -64,8 +68,10 @@ public class WordCounter {
       try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
         while (scanner.hasNext()) {
           String word = scanner.next();
-          wordCountMap.put(word, wordCountMap.getOrDefault(word, 0) + 1);
-          totalWordsCount++;
+          synchronized (lock) {
+            wordCountMap.put(word, wordCountMap.getOrDefault(word, 0) + 1);
+            totalWordsCount++;
+          }
         }
       } catch (FileNotFoundException e) {
         e.printStackTrace();
@@ -77,8 +83,10 @@ public class WordCounter {
     try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(path)))) {
       while (scanner.hasNext()) {
         String word = scanner.next();
-        wordCountMap.put(word, wordCountMap.getOrDefault(word, 0) + 1);
-        totalWordsCount++;
+        synchronized (lock) {
+          wordCountMap.put(word, wordCountMap.getOrDefault(word, 0) + 1);
+          totalWordsCount++;
+        }
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -89,18 +97,15 @@ public class WordCounter {
     System.out.println("Total number of words is " + totalWordsCount);
 
     // sort by word occurrence
-    mostUsedNWords = wordCountMap.entrySet().stream().sorted(comparingByValue()).limit(n)
-        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-            LinkedHashMap::new));
+    List<Entry<String, Integer>> sortedWordsByOccurence = wordCountMap.entrySet().stream()
+        .sorted(Comparator.comparing(Entry::getValue))
+        .collect(Collectors.toList());
 
-    System.out.println("Most used words are " + mostUsedNWords.toString());
+    leastUsedNWords = sortedWordsByOccurence.stream().limit(n).collect(toList());
+    mostUsedNWords = sortedWordsByOccurence.stream().skip(sortedWordsByOccurence.size() - n).collect(toList());
 
-    leastUsedNWords = wordCountMap.entrySet().stream()
-        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).limit(n)
-        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
-            LinkedHashMap::new));
-
-    System.out.println("Least used words are " + leastUsedNWords.toString());
+    System.out.println("Most used words are " + mostUsedNWords);
+    System.out.println("Least used words are " + leastUsedNWords);
   }
 
   public void read() throws IOException, InterruptedException {

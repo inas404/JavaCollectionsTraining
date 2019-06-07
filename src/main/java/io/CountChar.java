@@ -54,7 +54,7 @@ public class CountChar {
   }
 
   public static void main(String args[]) {
-    CountChar cc = new CountChar("/resources/io/count_char_file.txt");
+    CountChar cc = new CountChar("/Users/inas/Careem/Backend/src/main/resources/io/count_char_file.txt");
     System.out.print(cc.count(' '));
   }
 }

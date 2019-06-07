@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class CountCharTest {
 
-  private final CountChar cc = new CountChar("/resources/io/count_char_file.txt");
+  private final CountChar cc = new CountChar("/Users/inas/Careem/Backend/src/main/resources/io/count_char_file.txt");
 
   @Test
   public void countLetterShouldWork(){
