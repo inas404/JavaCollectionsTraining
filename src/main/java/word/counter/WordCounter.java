@@ -44,9 +44,6 @@ public class WordCounter {
     Files.walk(path).filter(f -> !Files.isDirectory(f)).forEach(f ->
         todo.add(new CountWordsCallable(f.toAbsolutePath().toString())));
 
-    wordCountMap.clear();
-    totalWordsCount = 0;
-
     for (Future<Pair<Integer, Map<String, Integer>>> callable : executorService.invokeAll(todo)) {
       Pair<Integer, Map<String, Integer>> threadResult = callable.get();
       totalWordsCount += threadResult.fst;
@@ -104,6 +101,9 @@ public class WordCounter {
   }
 
   public StatsHolder getStats(String strPath, int n) throws IOException, InterruptedException, ExecutionException {
+    wordCountMap.clear();
+    totalWordsCount = 0;
+
     Path path = Paths.get(strPath);
     if (!Files.exists(path)) {
       throw new FileNotFoundException();
