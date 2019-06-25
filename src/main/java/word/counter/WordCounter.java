@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -43,6 +44,9 @@ public class WordCounter {
     Files.walk(path).filter(f -> !Files.isDirectory(f)).forEach(f ->
         todo.add(new CountWordsCallable(f.toAbsolutePath().toString())));
 
+    wordCountMap.clear();
+    totalWordsCount = 0;
+
     for (Future<Pair<Integer, Map<String, Integer>>> callable : executorService.invokeAll(todo)) {
       Pair<Integer, Map<String, Integer>> threadResult = callable.get();
       totalWordsCount += threadResult.fst;
@@ -58,7 +62,7 @@ public class WordCounter {
     String filePath;
 
     @Override
-    public Pair<Integer, Map<String, Integer>> call() throws Exception {
+    public Pair<Integer, Map<String, Integer>> call() {
       Integer totalWordsCount = 0;
       Map<String, Integer> wordCountMap = new HashMap<>();
       try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
@@ -86,9 +90,7 @@ public class WordCounter {
     }
   }
 
-  private void doStats(int n) {
-    System.out.println("Total number of words is " + totalWordsCount);
-
+  private StatsHolder doStats(int n) {
     // sort by word occurrence
     List<Entry<String, Integer>> sortedWordsByOccurrence = wordCountMap.entrySet().stream()
         .sorted(Comparator.comparing(Entry::getValue))
@@ -98,11 +100,10 @@ public class WordCounter {
     leastUsedNWords = sortedWordsByOccurrence.stream().limit(n).collect(toList());
     mostUsedNWords = sortedWordsByOccurrence.stream().skip(sortedWordsByOccurrence.size() - n).collect(toList());
 
-    System.out.println("Most used words are " + mostUsedNWords);
-    System.out.println("Least used words are " + leastUsedNWords);
+    return new StatsHolder(mostUsedNWords, leastUsedNWords, totalWordsCount);
   }
 
-  public void getStats(String strPath, int n) throws IOException, InterruptedException, ExecutionException {
+  public StatsHolder getStats(String strPath, int n) throws IOException, InterruptedException, ExecutionException {
     Path path = Paths.get(strPath);
     if (!Files.exists(path)) {
       throw new FileNotFoundException();
@@ -112,15 +113,22 @@ public class WordCounter {
     } else {
       countWordsInFile(path.toAbsolutePath().toString());
     }
-    doStats(n);
-    wordCountMap.clear();
-    totalWordsCount = 0;
+    return doStats(n);
   }
 
-  // use tree map TreeMap won't help here as it sorts by key not by value
+  @AllArgsConstructor
+  class StatsHolder {
+    @Getter
+    private List<Entry<String, Integer>> mostUsedNWords, leastUsedNWords;
+    @Getter
+    private int totalWordsCount;
+  }
 
   public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
     WordCounter wc = new WordCounter();
-    wc.getStats("resources/word.counter", 2);
+    StatsHolder stats = wc.getStats("resources/word.counter", 2);
+    System.out.println("Total number of words is " + stats.getTotalWordsCount());
+    System.out.println("Most used words are " + stats.getMostUsedNWords());
+    System.out.println("Least used words are " + stats.getLeastUsedNWords());
   }
 }

@@ -2,4 +2,3 @@ In general, the ExecutorService will not be automatically destroyed when there i
 It will stay alive and wait for new work to do.
 In some cases this is very helpful; for example, if an app needs to process tasks which appear on an irregular basis or the quantity of these tasks is not known at compile time.
 On the other hand, an app could reach its end, but it will not be stopped because a waiting ExecutorService will cause the JVM to keep running.
-but
